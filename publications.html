@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术成果 | Publications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 600: '#2563eb', 700: '#1d4ed8' }, neutral: { 950: '#111827' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f9fafb; color: #111827; }
+        .pub-card { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; transition: all 0.2s ease-in-out; }
+        .pub-card:hover { border-color: #brand-600; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-brand-100">
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center gap-2 text-gray-500 hover:text-brand-600 transition font-medium text-sm">
+                <span id="nav-back">⬅ 返回</span>
+            </a>
+            <button onclick="toggleLanguage()" class="text-gray-600 hover:text-brand-600 px-3 py-1.5 rounded-full hover:bg-brand-50 transition font-medium text-sm border border-gray-200 bg-white shadow-sm">
+                <span id="lang-text" class="flex items-center gap-1.5"></span>
+            </button>
+        </header>
+
+        <div class="mb-10">
+            <h1 id="page-title" class="text-3xl font-extrabold text-neutral-950 tracking-tight mb-6"></h1>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" id="search-input" oninput="handleSearch()" class="block w-full pl-11 pr-4 py-4 bg-white border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 sm:text-sm shadow-sm transition-all" placeholder="">
+            </div>
+            <p id="search-stats" class="text-xs text-gray-500 mt-3 font-medium"></p>
+        </div>
+
+        <div id="all-pubs-container" class="space-y-4"></div>
+        
+        <div id="empty-state" class="hidden text-center py-20 text-gray-400">
+            <span class="text-4xl mb-4 block">📄</span>
+            <p id="empty-text">未找到匹配的学术成果</p>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // 利用 localStorage 保持两个页面的语言状态一致
+        let currentLang = localStorage.getItem('siteLang') || 'zh';
+        let currentSearchQuery = "";
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('siteLang', currentLang); // 记住用户的语言选择
+            renderPage();
+        }
+
+        function handleSearch() {
+            currentSearchQuery = document.getElementById('search-input').value.toLowerCase();
+            renderPubsList();
+        }
+
+        function renderPage() {
+            const data = websiteData;
+            const l = currentLang;
+
+            // 静态文本
+            document.getElementById('nav-back').innerText = data.nav.backHome[l];
+            document.getElementById('lang-text').innerText = data.nav.langBtn[l];
+            document.getElementById('page-title').innerText = data.nav.allPubs[l];
+            document.getElementById('search-input').placeholder = data.nav.searchPlaceholder[l];
+            document.getElementById('empty-text').innerText = l === 'zh' ? '未找到匹配的学术成果' : 'No matching publications found';
+
+            renderPubsList();
+        }
+
+        function renderPubsList() {
+            const data = websiteData;
+            const l = currentLang;
+            
+            // 过滤逻辑：匹配标题、作者或年份
+            const filteredPubs = data.pubData.filter(pub => {
+                if (!currentSearchQuery) return true;
+                const searchTarget = (pub.title[l] + pub.authors[l] + pub.year).toLowerCase();
+                return searchTarget.includes(currentSearchQuery);
+            });
+
+            // 更新搜索统计
+            const statsText = l === 'zh' ? `共找到 ${filteredPubs.length} 篇成果` : `Found ${filteredPubs.length} publications`;
+            document.getElementById('search-stats').innerText = statsText;
+
+            // 显示空状态或列表
+            document.getElementById('empty-state').classList.toggle('hidden', filteredPubs.length > 0);
+
+            document.getElementById('all-pubs-container').innerHTML = filteredPubs.map((pub, index) => `
+                <div class="pub-card p-6 flex gap-4 items-start">
+                    <div class="flex-shrink-0 mt-1">
+                        <span class="flex items-center justify-center w-8 h-8 rounded bg-brand-50 text-brand-600 text-sm font-bold border border-brand-100 shadow-sm">${index + 1}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mb-2">
+                            <span class="font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">${pub.year}</span>
+                            <span class="text-gray-300">|</span>
+                            <span class="font-medium text-gray-700">${pub.journal[l]}</span>
+                            ${pub.doi ? `<span class="text-gray-300">|</span><a href="https://doi.org/${pub.doi}" target="_blank" class="text-gray-400 hover:text-brand-600 underline decoration-gray-300 underline-offset-2">DOI: ${pub.doi}</a>` : ''}
+                        </div>
+                        
+                        <h3 class="text-lg font-bold text-neutral-950 leading-tight mb-2">${pub.title[l]}</h3>
+                        <p class="text-sm text-gray-600 mb-4">${pub.authors[l]}</p>
+                        
+                        ${pub.pdfLink ? `
+                        <a href="${pub.pdfLink}" target="_blank" rel="noopener noreferrer" download class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:text-brand-600 hover:border-brand-600 hover:bg-brand-50 text-sm font-semibold rounded-lg transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            PDF 全文下载 (${pub.pdfSize || '未知'})
+                        </a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 同步主页可能设置的语言，如果主页没设置过，默认为 zh
+            renderPage();
+        });
+    </script>
+</body>
+</html>

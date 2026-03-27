@@ -10,30 +10,17 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            600: '#2563eb', // 专业蓝
-                            700: '#1d4ed8',
-                        },
-                        neutral: {
-                            950: '#111827', // 深炭灰
-                        }
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 600: '#2563eb', 700: '#1d4ed8' },
+                        neutral: { 950: '#111827' }
                     }
                 }
             }
         }
     </script>
     <style>
-        body {
-            background-color: #ffffff;
-            color: #111827;
-        }
-        /* 清新风格的卡片 */
+        body { background-color: #ffffff; color: #111827; }
         .content-card {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -44,6 +31,11 @@
             border-color: #d1d5db;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
+        /* 自定义滚动条，让右侧滚动更优雅 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background-color: #e5e7eb; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background-color: #d1d5db; }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-brand-100">
@@ -54,15 +46,12 @@
                 <div class="w-7 h-7 bg-brand-600 rounded"></div>
                 <h1 id="nav-brand" class="text-xl font-bold text-neutral-950 tracking-tight"></h1>
             </div>
-            <div class="flex items-center gap-4 text-sm font-medium">
-                <button id="lang-toggle" onclick="toggleLanguage()" class="text-gray-600 hover:text-brand-600 flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-brand-50 transition">
-                    🌐 <span></span>
-                </button>
-            </div>
+            <button onclick="toggleLanguage()" class="text-gray-600 hover:text-brand-600 px-3 py-1.5 rounded-full hover:bg-brand-50 transition font-medium text-sm">
+                <span id="lang-text" class="flex items-center gap-1.5"></span>
+            </button>
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
             <div class="lg:col-span-2 space-y-8">
                 <section class="bg-brand-600 text-white p-8 sm:p-12 rounded-2xl shadow-sm">
                     <h2 id="hero-title" class="text-3xl sm:text-4xl font-extrabold tracking-tighter leading-tight mb-4"></h2>
@@ -81,18 +70,18 @@
                 </section>
             </div>
 
-            <div class="space-y-8">
-                <section class="content-card p-6 flex flex-col h-[520px]">
+            <div class="space-y-8 relative">
+                <section class="content-card p-6 flex flex-col transition-all duration-500 relative">
                     <h2 id="section-pubs" class="text-xl font-bold text-neutral-950 mb-6 pb-2 border-b border-gray-200"></h2>
-                    <div id="pubs-container" class="flex-1 overflow-y-auto pr-2 space-y-5 text-sm"></div>
+                    <div id="pubs-container" class="flex-1 space-y-5 text-sm"></div>
+                    <div id="pubs-action-container" class="mt-4 pt-4 border-t border-gray-100 hidden"></div>
                 </section>
 
-                <section class="content-card p-6">
+                <section class="content-card p-6 sticky top-6">
                     <h2 id="section-contact" class="text-xl font-bold text-neutral-950 mb-6 pb-2 border-b border-gray-200"></h2>
                     <div id="contact-container" class="text-sm space-y-4"></div>
                 </section>
             </div>
-
         </main>
 
         <footer id="footer-text" class="text-center text-xs text-gray-500 mt-16 py-8 border-t border-gray-100"></footer>
@@ -101,9 +90,15 @@
     <script src="data.js"></script>
     <script>
         let currentLang = 'zh';
+        let isPubsExpanded = false; // 新增：控制论文列表是否展开的状态
 
         function toggleLanguage() {
             currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            renderContent();
+        }
+
+        function togglePubs() {
+            isPubsExpanded = !isPubsExpanded;
             renderContent();
         }
 
@@ -111,20 +106,17 @@
             const data = websiteData;
             const l = currentLang;
 
-            // 静态文本渲染
             document.getElementById('nav-brand').innerText = data.nav.brand[l];
-            document.getElementById('lang-toggle').querySelector('span').innerText = data.nav.langBtn[l];
+            document.getElementById('lang-text').innerText = data.nav.langBtn[l];
             document.getElementById('hero-title').innerText = data.hero.title[l];
             document.getElementById('hero-subtitle').innerText = data.hero.subtitle[l];
             document.getElementById('hero-btn').innerText = data.hero.btn[l];
-            
             document.getElementById('section-architecture').innerText = data.sections.architecture[l];
             document.getElementById('section-team').innerText = data.sections.team[l];
             document.getElementById('section-pubs').innerText = data.sections.pubs[l];
             document.getElementById('section-contact').innerText = data.sections.contact[l];
             document.getElementById('footer-text').innerText = data.footer[l];
 
-            // 渲染研究领域卡片
             const uniqueResearch = data.researchData.slice(0, 4);
             document.getElementById('research-container').innerHTML = uniqueResearch.map(item => `
                 <div class="content-card p-5 group flex items-start gap-4 hover:border-brand-100">
@@ -136,12 +128,11 @@
                 </div>
             `).join('');
 
-            // 渲染团队成员 (照片改为彩色)
-            document.getElementById('team-container').innerHTML = data.teamData.map((category, index) => {
-                // 修正第三类的名称为更通用的“研究人员”
+            document.getElementById('team-container').innerHTML = data.teamData.map((category) => {
                 let catTitle = category.categoryTitle[l];
-                if (index === 2) {
-                    catTitle = l === 'zh' ? "研究人员 (Researchers)" : "Researchers";
+                // 强制将第三类修正为研究员
+                if (category.categoryTitle.zh.includes("研究生") || category.categoryTitle.zh.includes("学生")) {
+                    catTitle = l === 'zh' ? "研究员 (Researchers)" : "Researchers";
                 }
 
                 return `
@@ -152,12 +143,30 @@
                     </h3>
                     <div class="grid gap-4 ${category.cardsPerRow === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}">
                         ${category.members.map(member => `
-                            <div class="flex flex-col sm:flex-row gap-5 content-card p-5 hover:border-brand-100">
-                                <img src="${member.avatarImg}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(member.name.en)}&background=f3f4f6&color=111827'" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0 border border-gray-100 shadow-sm">
-                                <div class="flex-1 overflow-hidden">
-                                    <h4 class="font-semibold text-neutral-950 text-base">${member.name[l]}</h4>
-                                    <p class="text-xs text-brand-600 font-medium mb-3">${member.role[l]}</p>
-                                    ${category.cardsPerRow === 1 ? `<p class="text-xs text-gray-600 leading-relaxed line-clamp-3">${member.desc[l]}</p>` : ''}
+                            <div class="flex flex-col sm:flex-row gap-5 content-card p-5 hover:border-brand-100 relative items-center">
+                                <img src="${member.avatarImg}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(member.name.en)}&background=f3f4f6&color=111827'" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover flex-shrink-0 border border-gray-200 shadow-sm">
+                                
+                                <div class="flex-1 min-w-0 w-full">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h4 class="font-semibold text-neutral-950 text-base truncate pr-2">${member.name[l]}</h4>
+                                        <div class="flex gap-2 text-gray-400">
+                                            ${member.contact?.email ? `<a href="mailto:${member.contact.email}" class="hover:text-brand-600 transition" title="Email">✉️</a>` : ''}
+                                            ${member.contact?.website && member.contact.website !== '#' ? `<a href="${member.contact.website}" target="_blank" class="hover:text-brand-600 transition" title="Website">🔗</a>` : ''}
+                                            ${member.contact?.github && member.contact.github !== '#' ? `<a href="${member.contact.github}" target="_blank" class="hover:text-brand-600 transition" title="GitHub">💻</a>` : ''}
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-brand-600 font-medium mb-1 truncate">${member.role[l]}</p>
+                                    <p class="text-[11px] text-gray-500 mb-2 truncate" title="${member.department[l]}">${member.department[l]}</p>
+                                    
+                                    ${category.cardsPerRow === 1 ? 
+                                        `<div class="text-sm text-gray-600 leading-relaxed mt-4">${member.desc[l]}</div>` 
+                                        : 
+                                        `<div class="text-xs text-gray-600 mt-3 mb-3 leading-relaxed">${member.desc[l] || '暂无详细介绍...'}</div>
+                                         ${member.interests ? `<div class="flex flex-wrap gap-1 mt-auto">
+                                            ${member.interests[l].slice(0, 3).map(tag => `<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded border border-gray-200">${tag}</span>`).join('')}
+                                         </div>` : ''}
+                                        `
+                                    }
                                 </div>
                             </div>
                         `).join('')}
@@ -166,20 +175,42 @@
                 `;
             }).join('');
 
-            // 渲染学术成果列表
-            document.getElementById('pubs-container').innerHTML = data.pubData.slice(0, 6).map(pub => `
-                <div class="border-b border-gray-100 pb-4 last:border-0 last:pb-0 group">
-                    <div class="flex items-center gap-3 text-xs text-gray-400 mb-1.5">
-                        <span class="font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">${pub.year}</span>
-                        <span>|</span>
-                        <span class="truncate">${pub.journal[l]}</span>
+            // 修改④：基于状态控制论文列表渲染数量
+            const pubsToRender = isPubsExpanded ? data.pubData : data.pubData.slice(0, 6);
+            document.getElementById('pubs-container').innerHTML = pubsToRender.map((pub, index) => `
+                <div class="border-b border-gray-100 pb-5 last:border-0 last:pb-0 group flex gap-3.5 items-start">
+                    <div class="flex-shrink-0 mt-0.5">
+                        <span class="flex items-center justify-center w-6 h-6 rounded bg-brand-50 text-brand-600 text-xs font-bold border border-brand-100 shadow-sm">${index + 1}</span>
                     </div>
-                    <h4 class="font-medium text-neutral-950 group-hover:text-brand-600 transition cursor-pointer leading-snug">${pub.title[l]}</h4>
-                    <p class="text-xs text-gray-500 mt-1.5">${pub.authors[l]}</p>
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 text-xs text-gray-400 mb-1.5">
+                            <span class="font-semibold text-brand-600">${pub.year}</span>
+                            <span>|</span>
+                            <span class="truncate">${pub.journal[l]}</span>
+                        </div>
+                        
+                        <h4 class="font-medium text-neutral-950 leading-snug mb-1.5">${pub.title[l]}</h4>
+                        <p class="text-xs text-gray-500 mb-3">${pub.authors[l]}</p>
+                        
+                        ${pub.pdfLink ? `
+                        <a href="${pub.pdfLink}" target="_blank" rel="noopener noreferrer" download class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-600 hover:text-brand-600 hover:border-brand-600 hover:bg-brand-50 text-xs font-medium rounded-md transition-all shadow-sm">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            PDF 下载 (${pub.pdfSize || '未知'})
+                        </a>` : ''}
+                    </div>
                 </div>
             `).join('');
 
-            // 渲染联系方式
+            // 渲染“查看更多”按钮
+            const btnContainer = document.getElementById('pubs-action-container');
+            btnContainer.classList.remove('hidden');
+            btnContainer.innerHTML = `
+                <a href="publications.html" class="flex items-center justify-center w-full py-2.5 bg-white border border-gray-200 hover:border-brand-600 hover:text-brand-600 text-gray-600 text-xs font-semibold rounded-lg transition-colors shadow-sm">
+                    ${data.sections.morePubsBtn[l]}
+                </a>
+            `;
+
             document.getElementById('contact-container').innerHTML = `
                 <p class="text-gray-600 leading-relaxed mb-5 pb-5 border-b border-gray-100">${data.contactInfo.desc[l]}</p>
                 <div class="flex flex-col gap-3 font-medium text-gray-800">
