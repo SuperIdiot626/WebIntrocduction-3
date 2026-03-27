@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDFG | 创新设计与制造</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #121212;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        body { 
+            background-color: var(--bg-color); 
+            color: #e5e5e5; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 导航栏毛玻璃效果 */
+        .nav-glass {
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 便当盒通用样式与动画 */
+        .bento-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .bento-card:hover { 
+            border-color: rgba(59, 130, 246, 0.5); 
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        /* 渐变文本 */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #a78bfa);
+        }
+
+        /* 自定义滚动条隐藏，保持网格整洁 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pt-24 pb-12">
+
+    <nav class="nav-glass fixed top-0 w-full z-50 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-wider text-white">CDFG.</div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-400">
+                <a href="#about" class="hover:text-white transition">关于我们</a>
+                <a href="#research" class="hover:text-white transition">研究方向</a>
+                <a href="#publications" class="hover:text-white transition">学术成果</a>
+                <a href="#team" class="hover:text-white transition">团队成员</a>
+            </div>
+            <button class="px-4 py-2 bg-white text-black text-sm font-bold rounded-full hover:bg-gray-200 transition">
+                加入我们
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[minmax(180px,auto)]">
+        
+        <div class="md:col-span-3 md:row-span-2 bento-card flex flex-col justify-end min-h-[420px] group">
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition duration-700 mix-blend-luminosity"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+            <div class="relative z-10">
+                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-bold mb-4 inline-block">Computational Design & Fabrication</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-2">
+                    探索计算设计与<br><span class="text-gradient">数字制造的边界</span>
+                </h1>
+                <p class="text-gray-400 max-w-lg mt-4 text-sm leading-relaxed">
+                    西北工业大学 CDFG 实验室致力于在计算机科学、工程学与设计的交汇处，开发下一代智能制造工具与算法。
+                </p>
+            </div>
+        </div>
+
+        <div class="bento-card flex flex-col justify-center items-center text-center bg-gradient-to-br from-gray-900 to-[#121212]">
+            <span class="text-6xl font-black text-white">42<span class="text-blue-500">+</span></span>
+            <span class="text-gray-400 mt-3 text-sm font-medium">顶级会议/期刊论文<br>(SIGGRAPH, CHI)</span>
+        </div>
+
+        <div class="bento-card relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            </div>
+            <h3 class="font-bold text-lg text-white mb-4">核心研究领域</h3>
+            <ul class="text-sm text-gray-400 space-y-3 font-medium">
+                <li class="flex items-center hover:text-blue-400 cursor-pointer transition">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span> 几何处理与拓扑优化
+                </li>
+                <li class="flex items-center hover:text-blue-400 cursor-pointer transition">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2"></span> 智能机器人制造路径
+                </li>
+                <li class="flex items-center hover:text-blue-400 cursor-pointer transition">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span> 可持续增材制造材料
+                </li>
+            </ul>
+        </div>
+
+        <div class="md:col-span-2 bento-card">
+            <div class="flex justify-between items-end mb-6">
+                <h3 class="text-xl font-bold text-white">最新成果</h3>
+                <a href="#" class="text-sm text-blue-400 hover:text-blue-300">查看全部 →</a>
+            </div>
+            <div class="space-y-4">
+                <div class="group cursor-pointer">
+                    <p class="text-xs text-blue-400 font-mono mb-1">SIGGRAPH 2026</p>
+                    <h4 class="text-sm text-gray-200 font-medium group-hover:text-white transition">Generative AI for Support-Free 3D Printing Structures</h4>
+                </div>
+                <div class="w-full h-px bg-gray-800"></div>
+                <div class="group cursor-pointer">
+                    <p class="text-xs text-purple-400 font-mono mb-1">CHI 2025</p>
+                    <h4 class="text-sm text-gray-200 font-medium group-hover:text-white transition">Interactive Tools for Multi-Material Fabrication Design</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:col-span-2 bento-card bg-blue-600 border-none flex items-center justify-between group cursor-pointer overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800"></div>
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition duration-500"></div>
+            
+            <div class="relative z-10">
+                <h3 class="text-2xl font-bold text-white mb-1">加入 CDFG 团队</h3>
+                <p class="text-blue-100 text-sm">我们在寻找对科研充满热情的博士生与博士后。</p>
+            </div>
+            <div class="relative z-10 w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white group-hover:text-blue-600 transition-colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="max-w-6xl mx-auto px-6 mt-16 pt-8 border-t border-gray-800/50 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+        <p>© 2026 CDFG Research Group. Northwestern Polytechnical University.</p>
+        <div class="flex space-x-4 mt-4 md:mt-0">
+            <a href="mailto:cdfg@npu.edu.cn" class="hover:text-white transition">cdfg@npu.edu.cn</a>
+            <span>|</span>
+            <span>陕ICP备XXXXXXX号</span>
+        </div>
+    </footer>
+
+</body>
+</html>
